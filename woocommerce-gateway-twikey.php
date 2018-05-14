@@ -29,7 +29,6 @@ if ( ! is_woocommerce_active() ) {
  */
 function jb_wc_twikey_load_plugin_textdomain() {
 	$result = load_plugin_textdomain( 'jb-wc-twikey', false, basename( dirname( __FILE__ ) ) . '/languages' );
-	error_log( ! $result );
 }
 add_action( 'plugins_loaded', 'jb_wc_twikey_load_plugin_textdomain' );
 
@@ -52,7 +51,6 @@ add_action( 'plugins_loaded', 'jb_wc_twikey_init_WC_Gateway_Twikey' );
  */
 function jb_wc_twikey_add_WC_Gateway_Twikey( $methods ) {
 	$methods[] = 'WC_Gateway_Twikey';
-
 	return $methods;
 }
 add_filter( 'woocommerce_payment_gateways', 'jb_wc_twikey_add_WC_Gateway_Twikey' );
