@@ -269,10 +269,13 @@ class WC_Gateway_Twikey extends WC_Payment_Gateway {
 			$status     = $_GET['state'];
 			$signature  = $_SERVER['HTTP_APITOKEN'];
 			$checksum   = $this->get_option( 'api_token' );
+		} else {
+			// Stop right there.
+			exit;
 		}
 
 		if ( strtolower( $signature ) == strtolower( $checksum ) ) {
-			/* Finds the corresponding order(s). */
+			// Finds the corresponding order(s).
 			$query = new WC_Order_Query( array(
 				'orderby' => 'date',
 				'order' => 'DESC',
