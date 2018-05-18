@@ -65,15 +65,15 @@ class WC_Gateway_Twikey extends WC_Payment_Gateway {
 				'default' => 'no',
 			),
 			'title' => array(
-				'title'   => __( 'Title', 'jb-wc-twikey' ),
-				'type'    => 'text',
-				'default' => __( 'Twikey', 'jb-wc-twikey' ),
+				'title'    => __( 'Title', 'jb-wc-twikey' ),
+				'type'     => 'text',
+				'default'  => __( 'Twikey', 'jb-wc-twikey' ),
 				'desc_tip' => __( 'Payment method name shown on checkout.', 'jb-wc-twikey' ),
 			),
-			'description' => array(
-				'title'   => __( 'Customer Message', 'jb-wc-twikey' ),
-				'type'    => 'textarea',
-				'default' => __( 'Use your debit card or eID to sign a recurring payment mandate on checkout.', 'jb-wc-twikey' ),
+			'description'  => array(
+				'title'    => __( 'Customer Message', 'jb-wc-twikey' ),
+				'type'     => 'textarea',
+				'default'  => __( 'Use your debit card or eID to sign a recurring payment mandate on checkout.', 'jb-wc-twikey' ),
 				'desc_tip' => __( 'Payment method description shown on checkout.', 'jb-wc-twikey' ),
 			),
 			'api_token'       => array(
@@ -259,16 +259,20 @@ class WC_Gateway_Twikey extends WC_Payment_Gateway {
 		$signature = 'aNyRAnDomStRinG';
 		$checksum = 'aNyoTHeRRAnDomStRinG';
 
-		if ( 'exit_url' === $this->get_option( 'callback_type' ) && isset( $_GET['mandateNumber'] ) && isset( $_GET['state'] ) && isset( $_GET['sig'] ) && ctype_alnum( $_GET['mandateNumber'] ) ) {
-			$mandate_id = $_GET['mandateNumber'];
-			$status     = $_GET['state'];
-			$signature  = $_GET['sig'];
-			$checksum   = hash_hmac( 'sha256', $this->get_option( 'api_token' ),  $mandate_id . '/' . $status );
-		} elseif ( 'webhook' === $this->get_option( 'callback_type' ) && isset( $_GET['mandateNumber'] ) && isset( $_GET['state'] ) && ctype_alnum( $_GET['mandateNumber'] ) && isset( $_GET['type'] ) && 'contract' == $_GET['type'] ) {
-			$mandate_id = $_GET['mandateNumber'];
-			$status     = $_GET['state'];
-			$signature  = $_SERVER['HTTP_APITOKEN'];
-			$checksum   = $this->get_option( 'api_token' );
+		if ( 'exit_url' === $this->get_option( 'callback_type' ) ) {
+			if ( isset( $_GET['mandateNumber'] ) && isset( $_GET['state'] ) && isset( $_GET['sig'] ) && ctype_alnum( $_GET['mandateNumber'] ) ) {
+				$mandate_id = $_GET['mandateNumber'];
+				$status     = $_GET['state'];
+					$signature  = $_GET['sig'];
+				$checksum   = hash_hmac( 'sha256', $this->get_option( 'api_token' ),  $mandate_id . '/' . $status );
+			}
+		} elseif ( 'webhook' === $this->get_option( 'callback_type' ) ) {
+			if ( isset( $_GET['mandateNumber'] ) && isset( $_GET['state'] ) && ctype_alnum( $_GET['mandateNumber'] ) && isset( $_GET['type'] ) && 'contract' == $_GET['type'] ) {
+				$mandate_id = $_GET['mandateNumber'];
+				$status     = $_GET['state'];
+				$signature  = $_SERVER['HTTP_APITOKEN'];
+				$checksum   = $this->get_option( 'api_token' );
+			}
 		} else {
 			// Stop right there.
 			exit;
@@ -324,7 +328,7 @@ class WC_Gateway_Twikey extends WC_Payment_Gateway {
 
 		// For debugging.
 		if ( '' !== $error_message ) {
-			error_log( $error_message );
+			JB_WC_Twikey_Payment_Gateway::error_log( $error_message );
 		}
 
 		/*
