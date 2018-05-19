@@ -8,6 +8,7 @@
  * @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
+if ( ! class_exists( 'WC_Gateway_Twikey' ) ) :
 /**
  * Twikey WooCommerce Payment Gateway class.
  *
@@ -255,12 +256,12 @@ class WC_Gateway_Twikey extends WC_Payment_Gateway {
 		$error_message = '';
 		$order = null;
 		$mandate_id = 0;
-		$status = 'Not OK';
-		$signature = 'aNyRAnDomStRinG';
-		$checksum = 'aNyoTHeRRAnDomStRinG';
+		$status = 'Not at all OK';
+		$signature = 'Any random string';
+		$checksum = 'Any other random string';
 
 		if ( 'exit_url' === $this->get_option( 'callback_type' ) ) {
-			if ( isset( $_GET['mandateNumber'] ) && isset( $_GET['state'] ) && isset( $_GET['sig'] ) && ctype_alnum( $_GET['mandateNumber'] ) ) {
+			if ( isset( $_GET['mandateNumber'] ) && isset( $_GET['state'] ) && ctype_alnum( $_GET['mandateNumber'] ) && isset( $_GET['sig'] ) ) {
 				$mandate_id = $_GET['mandateNumber'];
 				$status = $_GET['state'];
 				$signature = $_GET['sig'];
@@ -328,7 +329,7 @@ class WC_Gateway_Twikey extends WC_Payment_Gateway {
 
 		// For debugging.
 		if ( '' !== $error_message ) {
-			JB_WC_Twikey_Payment_Gateway::error_log( $error_message );
+			$this->error_log( $error_message );
 		}
 
 		/*
@@ -354,4 +355,17 @@ class WC_Gateway_Twikey extends WC_Payment_Gateway {
 	function format_address( $address_1 = '', $address_2 = '' ) {
 		return trim( trim( $address_1 ) . ' ' . trim( $address_2 ) );
 	}
+
+	/**
+	 * Logs error messages to the debug log file in the plugin folder, if WordPress
+	 * debugging is enabled.
+	 *
+	 * @since 0.1.2
+	 */
+	function error_log( $message ) {
+		if ( true === WP_DEBUG ) {
+			error_log( date( 'Y-m-d H:i:s' ) . ' ' . $message . PHP_EOL, 3, dirname( dirname( __FILE__ ) ) . '/debug.log' );
+		}
+	}
 }
+endif;
