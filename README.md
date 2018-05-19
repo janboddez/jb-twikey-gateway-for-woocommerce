@@ -1,6 +1,6 @@
 # Twikey Payment Gateway for WooCommerce
 Contributors: janboddez  
-Tags: woocommerce, payment gateways  
+Tags: woocommerce, payment gateways, twikey, recurring payments  
 Requires at least: 4.7  
 Tested up to: 4.9  
 Requires PHP: 5.2.4  
