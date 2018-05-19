@@ -10,10 +10,11 @@ Thumbs.db
 *.sublime-workspace
 *.komodoproject
 
-# ignore log files and databases
+# ignore log files, databases and shell scripts
 *.log
 *.sql
 *.sqlite
+*.sh
 
 # ignore compiled files
 *.com
@@ -35,3 +36,6 @@ Thumbs.db
 
 # ignore phpDocumentor-generated docs 
 docs/
+
+#ignore svn output
+svn/

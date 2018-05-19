@@ -4,8 +4,6 @@
  * payment gateway class.
  *
  * @package WooCommerce_Gateway_Twikey
- * @author Jan Boddez [jan@janboddez.be]
- * @license http://www.gnu.org/licenses/gpl-3.0.html GNU General Public License v3.0
  */
 
 if ( ! class_exists( 'WC_Gateway_Twikey' ) ) :
