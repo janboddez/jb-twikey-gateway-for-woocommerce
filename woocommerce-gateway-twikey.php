@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Twikey Payment Gateway for WooCommerce
- * Description: Enable Twikey checkout for WooCommerce Subscriptions and allow customers to easily sign a recurring payment mandate.
+ * Description: Enable Twikey checkout for WooCommerce (and WooCommerce Subscriptions) and allow customers to easily sign a recurring payment mandate.
  * Author: Jan Boddez
  * Author URI: https://janboddez.be/
  * License: GNU General Public License v2 or later
@@ -17,8 +17,8 @@
 // Prevents this script from being loaded directly.
 defined( 'ABSPATH' ) or exit;
 
-// Ensures WooCommerce and WooCommerce Subscriptions are both active.
-if ( ! is_woocommerce_active() || ! is_plugin_active( 'woocommerce-subscriptions/woocommerce-subscriptions.php' ) ) {
+// Ensures WooCommerce is active.
+if ( ! is_woocommerce_active() ) {
 	return;
 }
 

@@ -11,8 +11,7 @@ if ( ! class_exists( 'WC_Gateway_Twikey' ) ) :
  * Twikey WooCommerce Payment Gateway class.
  *
  * The Twikey Payment Gateway for WooCommerce adds Twikey compatibility to
- * WooCommerce. (Twikey allows users to easily sign a recurring payment mandate
- * using their eID or debit card.) This class holds the bulk of the
+ * WooCommerce and WooCommerce Subscriptions. This class holds the bulk of the
  * functionality.
  * 
  * @since 0.1.0
@@ -30,7 +29,7 @@ class WC_Gateway_Twikey extends WC_Payment_Gateway {
 		$this->method_title = __( 'Twikey', 'jb-wc-twikey' );
 		$this->method_description = __( 'Use your debit card or eID to sign a recurring payment mandate on checkout.', 'jb-wc-twikey' );
 		$this->supports = array( 
-			//'products',
+			'products',
 			'subscriptions',
 			//'subscription_cancellation',
 			//'subscription_suspension',
