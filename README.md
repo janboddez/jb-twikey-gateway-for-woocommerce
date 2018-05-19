@@ -10,6 +10,4 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 WC requires at least: 2.5
 WC tested up to: 3.3
 
-Enable Twikey checkout for WooCommerce Subscriptions and allow customers to
-easily sign a recurring SEPA (Single Euro Payments Area) mandate using their
-debit card or eID.
+Enable Twikey checkout for WooCommerce Subscriptions and allow customers to easily sign a recurring SEPA (Single Euro Payments Area) mandate using their debit card or eID.
