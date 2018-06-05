@@ -77,12 +77,17 @@ class WC_Gateway_Twikey extends WC_Payment_Gateway {
 			'api_token' => array(
 				'title' => __( 'API Token', 'jb-wc-twikey' ),
 				'type' => 'text',
-				'description' => __( 'Your unique Twikey API token.', 'jb-wc-twikey' ),
+				'description' => sprintf( __( 'Your <a href="%s" target="_blank" rel="noopener">API token</a>.', 'jb-wc-twikey' ), 'https://www.twikey.com/r/admin#/c/settings/ei' ),
+			),
+			'private_key' => array(
+				'title' => __( 'Private Key', 'jb-wc-twikey' ),
+				'type' => 'text',
+				'description' => sprintf( __( 'Your <a href="%s" target="_blank" rel="noopener">private key</a>.', 'jb-wc-twikey' ), 'https://www.twikey.com/r/admin#/c/settings/ip' ),
 			),
 			'contract_template' => array(
 				'title' => __( 'Contract Template', 'jb-wc-twikey' ),
 				'type' => 'text',
-				'description' => __( 'The unique ID of the contract template to be used.', 'jb-wc-twikey' ),
+				'description' => sprintf( __( 'The unique ID of the <a href="%s" target="_blank" rel="noopener">contract template</a> to be used.', 'jb-wc-twikey' ), 'https://www.twikey.com/r/admin#/c/contracttemplate' ),
 			),
 			'callback_type' => array(
 				'title' => __( 'Callback Type', 'jb-wc-twikey' ),
@@ -90,12 +95,12 @@ class WC_Gateway_Twikey extends WC_Payment_Gateway {
 				'default' => 'none',
 				'options' => array(
 					'none' => __( 'None', 'jb-wc-twikey' ),
-					'webhook' => __( 'Webhook', 'jb-wc-twikey' ),
+					//'webhook' => __( 'Webhook', 'jb-wc-twikey' ),
 					'exit_url' => __( 'Exit URL', 'jb-wc-twikey' ),
 				 ),
 				'description' => __( 'The type of callback (if any) used to communicate back to WooCommerce after a mandate is signed.', 'jb-wc-twikey' ) . '<br />'
-					. sprintf( __( "When set to 'Webhook', you <strong>must</strong> set the callback URL in the Twikey <a href='%s' target='_blank'>API settings</a> to %s.", 'jb-wc-twikey' ), 'https://www.twikey.com/r/admin#/c/settings/ei', '<code>http(s)://mysite.com/wc-api/wc_gateway_twikey/</code>' ) . '<br />'
-					. sprintf( __( "When set to 'Exit URL', you <strong>must</strong> configure the Exit URL(s) in the Twikey <a href='%s' target='_blank'>contract template settings</a> to %s.", 'jb-wc-twikey' ), 'https://www.twikey.com/r/admin#/c/contracttemplate', '<code>http(s)://mysite.com/wc-api/wc_gateway_twikey/?mandateNumber={0}&state={1}&sig={3}</code>' ),
+					//. sprintf( __( "When set to 'Webhook', you <strong>must</strong> set the callback URL in the Twikey <a href='%s' target='_blank'>API settings</a> to %s.", 'jb-wc-twikey' ), 'https://www.twikey.com/r/admin#/c/settings/ei', '<code>http(s)://mysite.com/wc-api/wc_gateway_twikey/</code>' ) . '<br />'
+					. sprintf( __( "When set to 'Exit URL', you <strong>must</strong> configure the Exit URL(s) in the Twikey <a href='%s' target='_blank' rel='noopener'>contract template settings</a> to %s.", 'jb-wc-twikey' ), 'https://www.twikey.com/r/admin#/c/contracttemplate', '<code>http(s)://mysite.com/wc-api/wc_gateway_twikey/?mandateNumber={0}&state={1}&sig={3}</code>' ),
 			),
 		);
 	}
@@ -250,27 +255,27 @@ class WC_Gateway_Twikey extends WC_Payment_Gateway {
 	 * @since 0.1.0
 	 */
 	function callback_handler() {
-		$error_message = '';
 		$order = null;
 		$mandate_id = 0;
 		$status = 'Not at all OK';
 		$signature = 'Any random string';
 		$checksum = 'Any other random string';
+		$error_message = '';
 
 		if ( 'exit_url' === $this->get_option( 'callback_type' ) ) {
 			if ( isset( $_GET['mandateNumber'] ) && isset( $_GET['state'] ) && ctype_alnum( $_GET['mandateNumber'] ) && isset( $_GET['sig'] ) ) {
 				$mandate_id = $_GET['mandateNumber'];
 				$status = $_GET['state'];
 				$signature = $_GET['sig'];
-				$checksum = hash_hmac( 'sha256', $this->get_option( 'api_token' ),  $mandate_id . '/' . $status );
+				$checksum = hash_hmac( 'sha256', $mandate_id . '/' . $status, $this->get_option( 'private_key' ) );
 			}
-		} elseif ( 'webhook' === $this->get_option( 'callback_type' ) ) {
-			if ( isset( $_GET['mandateNumber'] ) && isset( $_GET['state'] ) && ctype_alnum( $_GET['mandateNumber'] ) && isset( $_GET['type'] ) && 'contract' == $_GET['type'] ) {
-				$mandate_id = $_GET['mandateNumber'];
-				$status = $_GET['state'];
-				$signature = $_SERVER['HTTP_APITOKEN'];
-				$checksum = $this->get_option( 'api_token' );
-			}
+		//} elseif ( 'webhook' === $this->get_option( 'callback_type' ) ) {
+		//	if ( isset( $_GET['mandateNumber'] ) && isset( $_GET['state'] ) && ctype_alnum( $_GET['mandateNumber'] ) && isset( $_GET['type'] ) && 'contract' == $_GET['type'] ) {
+		//		$mandate_id = $_GET['mandateNumber'];
+		//		$status = $_GET['state'];
+		//		$signature = $_SERVER['HTTP_APITOKEN'];
+		//		$checksum = $this->get_option( 'api_token' );
+		//	}
 		} else {
 			// Stop right there.
 			exit;
@@ -299,7 +304,7 @@ class WC_Gateway_Twikey extends WC_Payment_Gateway {
 						}
 					}
 				} else {
-					$error_message = 'The reported Twikey mandate (' . esc_attr( $mandate_id ) . ') status is something other than OK or signed: ' .  esc_attr( $status ) . '.';
+					$error_message = 'The reported Twikey mandate (' . esc_attr( $mandate_id ) . ') status is something other than "OK" or "signed": ' .  esc_attr( $status ) . '.';
 
 					foreach ( $orders as $order ) {
 						if ( wcs_order_contains_subscription( $order->id ) ) {
@@ -361,7 +366,7 @@ class WC_Gateway_Twikey extends WC_Payment_Gateway {
 	 */
 	function error_log( $message ) {
 		if ( true === WP_DEBUG ) {
-			error_log( date( 'Y-m-d H:i:s' ) . ' ' . $message . PHP_EOL, 3, dirname( dirname( __FILE__ ) ) . '/debug.log' );
+			error_log( '[' . date_i18n( 'Y-m-d H:i:s' ) . '] ' . $message . PHP_EOL, 3, dirname( dirname( __FILE__ ) ) . '/debug.log' );
 		}
 	}
 }
