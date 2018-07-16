@@ -37,5 +37,12 @@ Thumbs.db
 # ignore phpDocumentor-generated docs 
 docs/
 
-#ignore svn output
+# ignore svn output
 svn/
+
+# ignore tests and such
+.travis.yml
+phpunit.xml.dist
+phpcs.xml.dist
+tests/
+bin/
