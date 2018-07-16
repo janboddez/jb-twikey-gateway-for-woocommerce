@@ -3,7 +3,7 @@
  * Part of the Twikey Gateway for WooCommerce plugin that contains the actual
  * payment gateway class.
  *
- * @package JB_WC_Twikey_Gateway
+ * @package JB_Twikey_Gateway_WooCommerce
  */
 
 if ( ! class_exists( 'WC_Gateway_JB_Twikey' ) ) :

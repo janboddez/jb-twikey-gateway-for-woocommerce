@@ -12,7 +12,7 @@
  *
  * @author Jan Boddez [jan@janboddez.be]
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU General Public License v2.0
- * @package JB_WC_Twikey_Gateway
+ * @package JB_Twikey_Gateway_WooCommerce
  */
 
 /* Prevents this script from being loaded directly. */
