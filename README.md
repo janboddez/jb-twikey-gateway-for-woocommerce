@@ -38,3 +38,5 @@ processing generally does not take longer than a few days.
 should never be a problem, though, as WooCommerce itself sets payments and
 payment totals. (There should be no need for payment plans outside of
 WooCommerce.)
+* To do: replace cURL functions with `wp_remote_get()` or `wp_remote_post()`
+calls.
