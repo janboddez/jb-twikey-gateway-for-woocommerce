@@ -1,14 +1,15 @@
 <?php
 /**
  * Plugin Name: Twikey Gateway for WooCommerce
- * Plugin URI: https://janboddez.be/wordpress/twikey/
+ * Plugin URI: https://github.com/janboddez/jb-twikey-gateway-for-woocommerce/
  * Description: Enable Twikey checkout for WooCommerce and allow customers to easily sign a recurring payment mandate. Supports (but does not require) WooCommerce Subscriptions and automatic subscription renewal payments.
  * Author: Jan Boddez
  * Author URI: https://janboddez.be/
  * License: GNU General Public License v2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: jb-wc-twikey
- * Version: 0.2.0
+ * Version: 0.2.1
+ * GitHub Plugin URI: https://github.com/janboddez/jb-twikey-gateway-for-woocommerce/
  *
  * @author Jan Boddez [jan@janboddez.be]
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU General Public License v2.0
@@ -52,7 +53,10 @@ class JB_Twikey_Gateway_WooCommerce {
 	 * @since 0.1.0
 	 */
 	function init_gateway() {
-		require_once dirname( __FILE__ ) . '/includes/class-wc-gateway-jb-twikey.php';
+		if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+			// If WooCommerce is active.
+			require_once dirname( __FILE__ ) . '/includes/class-wc-gateway-jb-twikey.php';
+		}
 	}
 
 	/**
@@ -85,6 +89,7 @@ class JB_Twikey_Gateway_WooCommerce {
 	 * @return array The list of WooCommerce payment gateways.
 	 */
 	public function add_gateway( $methods ) {
+		// Will only ever get called if WooCommerce is active.
 		$methods[] = 'WC_Gateway_JB_Twikey'; // Important: the _gateway_ class name!
 		return $methods;
 	}
@@ -95,8 +100,14 @@ class JB_Twikey_Gateway_WooCommerce {
 	 * @since 0.2.0
 	 */
 	public function check_transactions() {
-		$gateway = new WC_Gateway_JB_Twikey;
-		$gateway->check_transactions();
+		if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+			// If WooCommerce is active.
+			$available_gateways = WC()->payment_gateways->payment_gateways();
+
+			if ( isset( $available_gateways['jb_twikey'] ) && $available_gateways['jb_twikey'] instanceof WC_Gateway_JB_Twikey ) {
+				$available_gateways['jb_twikey']->check_transactions();
+			}
+		}
 	}
 }
 endif;
