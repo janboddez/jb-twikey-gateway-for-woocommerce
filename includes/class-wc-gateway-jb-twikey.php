@@ -25,9 +25,8 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 	public function __construct() {
 		$this->id = 'jb_twikey'; // Changed after the 'official' Twikey plugin came into existence.
 		$this->icon = null;
-		$this->has_fields = true;
-		$this->method_title = __( 'Pre-authorized payment via Twikey', 'jb-wc-twikey' );
-		$this->method_description = __( "Sign a recurring payment mandate using a debit card, eID or text message, or use an existing mandate if you've signed one before.", 'jb-wc-twikey' );
+		$this->method_title = __( 'Pre-authorized direct debit via Twikey', 'jb-wc-twikey' );
+		$this->method_description = __( 'Sign a direct debit mandate using a debit card, eID or text message.', 'jb-wc-twikey' );
 		$this->supports = array( 
 			'products',
 			'subscriptions',
@@ -74,7 +73,7 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 			'description' => array(
 				'title' => __( 'Customer Message', 'jb-wc-twikey' ),
 				'type' => 'textarea',
-				'default' => __( 'Use your debit card or eID to sign a recurring payment mandate on checkout.', 'jb-wc-twikey' ),
+				'default' => __( 'Sign a direct debit mandate using a debit card, eID or text message.', 'jb-wc-twikey' ),
 				'desc_tip' => __( 'Payment method description shown on checkout.', 'jb-wc-twikey' ),
 			),
 			'transaction_message' => array(
@@ -105,12 +104,12 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 				'options' => array( 'exit_url' => __( 'Exit URL', 'jb-wc-twikey' ) ),
 				'description' => sprintf( __( 'For this payment gateway to work correctly, you <strong>absolutely must</strong> configure all Exit URLs in the Twikey <a href="%1$s" target="_blank" rel="noopener">contract template settings</a> to %2$s.', 'jb-wc-twikey' ), 'https://www.twikey.com/r/admin#/c/contracttemplate', '<code>' . get_home_url( null, '/wc-api/wc_gateway_jb_twikey/?mandateNumber={0}&state={1}&sig={3}' ) . '</code>' ),
 			),
-			'test' => array(
-				'title' => __( 'Test environment?', 'jb-wc-twikey' ),
-				'label' => __( "Check when using Twikey's test environment", 'jb-wc-twikey' ),
-				'type' => 'checkbox',
-				'default' => 'no',
-			),
+			//'test' => array(
+			//	'title' => __( 'Test environment?', 'jb-wc-twikey' ),
+			//	'label' => __( "Check when using Twikey's test environment", 'jb-wc-twikey' ),
+			//	'type' => 'checkbox',
+			//	'default' => 'no',
+			//),
 		);
 	}
 
@@ -246,14 +245,16 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 				 * The returned mandate still needs signed or is otherwise
 				 * uncollectable.
 				 */
-				$renewal_order->update_status( 'failed', __( 'Renewal order could not be completed: the status of the Twikey mandate associated with the order is invalid.', 'jb-wc-twikey' ) );
+				$renewal_order->update_status( 'failed', __( 'Renewal order could not be completed: the associated Twikey mandate has an invalid status.', 'jb-wc-twikey' ) );
 			} else {
 				/* Stores the mandate ID for later use. */
 				update_post_meta( $parent_order_id, '_twikey_mandate_id', $invite['mandate_id'] ); // Stores things straight into 'wp_postmeta'.
 				$renewal_order->update_meta_data( '_twikey_mandate_id', $invite['mandate_id'] );
 				$renewal_order->save();
 
-				/* The mandate's collectable, so let's add a fresh transaction. */
+				/*
+				 * The mandate's collectable, so let's add a fresh transaction.
+				 */
 				if ( false !== $this->add_transaction( $auth_token, $invite['mandate_id'], $renewal_order ) ) {
 					/*
 					 * All went well and we've now asked for a payment. Let's
@@ -266,7 +267,7 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 		} else {
 			/* Verify the status of the mandate associated with the order. */
 			if ( false === $this->get_mandate_status( $auth_token, $mandate_id ) ) {
-				$renewal_order->update_status( 'failed', __( 'Renewal order could not be completed: the status of the Twikey mandate associated with the order is invalid.', 'jb-wc-twikey' ) );
+				$renewal_order->update_status( 'failed', __( 'Renewal order could not be completed: the associated Twikey mandate has an invalid status.', 'jb-wc-twikey' ) );
 			} else {
 				/* We're not done, yet: now submit a new transaction request. */
 				if ( false !== $this->add_transaction( $auth_token, $mandate_id, $renewal_order ) ) {
@@ -294,6 +295,7 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 		$order = null;
 		$error_message = '';
 
+		/* Basic sanity check. */
 		if ( isset( $_GET['mandateNumber'] ) && ctype_alnum( $_GET['mandateNumber'] ) && isset( $_GET['state'] ) && ctype_alnum( $_GET['state'] ) && isset( $_GET['sig'] ) && ctype_alnum( $_GET['sig'] ) ) {
 			$mandate_id = $_GET['mandateNumber'];
 			$status = $_GET['state'];
@@ -306,10 +308,7 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 				/* We trust the request came from Twikey. */
 				if ( 'ok' == strtolower( $status ) || 'signed' == strtolower( $status ) || 'alreadysigned' == strtolower( $status ) ) {
 					/*
-					 * Finds the most recent corresponding (with the mandate ID)
-					 * order(s). While assuming just one order will be returned
-					 * might not be correct, one may also prefer the customer is
-					 * not charged more than once.
+					 * Finds (only) the most recent corresponding order.
 					 */
 					$query = new WC_Order_Query( array(
 						'orderby' => 'date',
@@ -318,7 +317,7 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 						'status' => array( 'wc-pending' ), // Any order just submitted will have status 'pending'.
 						'meta_key' => '_twikey_mandate_id',
 						'meta_value' => $mandate_id,
-						'limit' => 10, // Anything over zero. Not trusting the default no. of posts as set in the WordPress General Settings.
+						'limit' => 1,
 					) );
 					$orders = $query->get_orders();
 
@@ -415,14 +414,25 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 	 * @return string|false Auth token on success, false otherwise.
 	 */
 	private function get_auth() {
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, $this->get_host() . '/creditor' );
-		curl_setopt( $ch, CURLOPT_POST, 1 );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, 'apiToken=' . $this->get_option( 'api_token' ) );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		$server_output = curl_exec( $ch );
-		curl_close( $ch );
-		$result = json_decode( $server_output );
+		$response = wp_remote_post( $this->get_host() . '/creditor', array(
+			'body'=> array(
+				'apiToken' => $this->get_option( 'api_token' ),
+			),
+		) );
+
+		if ( is_wp_error( $response ) ) {
+			$this->error_log( $response->get_error_message() );
+			return false;
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+
+		if ( is_wp_error( $body ) ) {
+			$this->error_log( $body->get_error_message() );
+			return false;
+		}
+
+		$result = @json_decode( $body );
 
 		if ( ! isset ( $result->{'Authorization'} ) ) {
 			return false;
@@ -443,33 +453,39 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 	 */
 	private function get_invite( $auth_token, $order ) {
 		$invite = false;
-		$args = array(
-			'ct' => $this->get_option( 'contract_template' ),
-			'l' => substr( get_bloginfo( 'language' ), 0, 2 ),
-			'email' => $order->get_billing_email(),
-			'lastname' => $order->get_billing_last_name(),
-			'firstname' => $order->get_billing_first_name(),
-			'address' => trim( $order->get_billing_address_1() . ' ' . $order->get_billing_address_2() ),
-			'zip' => $order->get_billing_postcode(),
-			'city' => $order->get_billing_city(),
-			'country' => $order->get_billing_country(),
-			'check' => true, // Do not create a new mandate if one already exists.
-		);
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, $this->get_host() . '/creditor/invite' );
-		curl_setopt( $ch, CURLOPT_POST, 1 );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $args ) );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
-			'Content-Type: application/x-www-form-urlencoded',
-			'Authorization: ' . $auth_token,
+		$response = wp_remote_post( $this->get_host() . '/creditor/invite', array(
+			'headers' => array(
+				'Authorization' => $auth_token,
+			),
+			'body' => array(
+				'ct' => $this->get_option( 'contract_template' ),
+				'l' => substr( get_bloginfo( 'language' ), 0, 2 ),
+				'email' => $order->get_billing_email(),
+				'lastname' => $order->get_billing_last_name(),
+				'firstname' => $order->get_billing_first_name(),
+				'address' => trim( $order->get_billing_address_1() . ' ' . $order->get_billing_address_2() ),
+				'zip' => $order->get_billing_postcode(),
+				'city' => $order->get_billing_city(),
+				'country' => $order->get_billing_country(),
+				'check' => true, // Do not create a new mandate if one already exists.
+			),
 		) );
-		$server_output = curl_exec( $ch );
-		$http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-		curl_close( $ch );
-		$result = json_decode( $server_output );
 
-		if ( 200 != $http_code ) {
+		if ( is_wp_error( $response ) ) {
+			$this->error_log( $response->get_error_message() );
+			return false;
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+
+		if ( is_wp_error( $body ) ) {
+			$this->error_log( $body->get_error_message() );
+			return false;
+		}
+
+		$result = @json_decode( $body );
+
+		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			/* Something went wrong. */
 			if ( ! empty( $result->{'message'} ) ) { 
 				$this->error_log( 'An error occurred trying to get a Twikey mandate: ' . $result->{'message'} . '.' );
@@ -508,32 +524,20 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 	 */
 	private function get_mandate_status( $auth_token, $mandate_id ) {
 		$status = false;
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, $this->get_host() . '/creditor/mandate/detail?mndtId=' . $mandate_id );
-		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'GET' );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
-			'Authorization: ' . $auth_token,
+		$response = wp_remote_get( $this->get_host() . '/creditor/mandate/detail?mndtId=' . $mandate_id, array(
+			'headers' => array(
+				'Authorization' => $auth_token,
+			),
 		) );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		curl_setopt( $ch, CURLOPT_HEADER, 1 );
-		$server_output = curl_exec( $ch );
-		$http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-		curl_close( $ch );
 
-		if ( 200 == $http_code ) {
-			/*
-			 * Given the params we provided, only signed mandates should be
-			 * returned. But: even a signed mandate may be uncollectable.
-			 */
-			list( $headers, $response ) = explode( "\r\n\r\n", $server_output, 2 );
-			$headers = explode( "\n", $headers );
+		if ( is_wp_error( $response ) ) {
+			$this->error_log( $response->get_error_message() );
+			return false;
+		}
 
-			foreach ( $headers as $header ) {
-				if ( false !== stripos( $header, 'x-collectable: true' ) ) {
-					/* Mandate really is collectable. */
-					$status = true;
-				}
-			}
+		if ( 200 === wp_remote_retrieve_response_code( $response ) && 'true' === wp_remote_retrieve_header( $response, 'x-collectable' ) ) {
+			/* Mandate really is collectable. */
+			$status = true;
 		}
 
 		return $status;
@@ -548,27 +552,33 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 	 * @return string|false The transaction ID or false on failure.
 	 */
 	private function add_transaction( $auth_token, $mandate_id, $order ) {
-		$args = array(
-			'mndtId' => $mandate_id,
-			'ref' => $order->get_id(),
-			'message' => esc_attr( remove_accents( wp_strip_all_tags( $this->get_option( 'transaction_message' ) ) ) ), // May be overkill, but making sure no invalid characters are present.
-			'amount' => round( $order->get_total(), 2 ),
-		);
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, $this->get_host() . '/creditor/transaction' );
-		curl_setopt( $ch, CURLOPT_POST, 1 );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( $args ) );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, array(
-			'Content-Type: application/x-www-form-urlencoded',
-			'Authorization: ' . $auth_token,
+		$response = wp_remote_post( $this->get_host() . '/creditor/transaction', array(
+			'headers' => array(
+				'Authorization' => $auth_token,
+			),
+			'body' => array(
+				'mndtId' => $mandate_id,
+				'ref' => $order->get_id(),
+				'message' => remove_accents( wp_strip_all_tags( $this->get_option( 'transaction_message' ) ) ), // May be overkill, but making sure no invalid characters are present.
+				'amount' => round( $order->get_total(), 2 ),
+			),
 		) );
-		$server_output = curl_exec( $ch );
-		$http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-		curl_close( $ch );
-		$result = json_decode( $server_output );
 
-		if ( 200 == $http_code && ! empty( $result->{'Entries'} ) ) {
+		if ( is_wp_error( $response ) ) {
+			$this->error_log( $response->get_error_message() );
+			return false;
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+
+		if ( is_wp_error( $body ) ) {
+			$this->error_log( $body->get_error_message() );
+			return false;
+		}
+
+		$result = @json_decode( $body );
+
+		if ( 200 === wp_remote_retrieve_response_code( $response ) && ! empty( $result->{'Entries'} ) ) {
 			$transaction = reset( $result->{'Entries'} ); // Only one entry should be returned.
 
 			if ( isset( $transaction->{'id'} ) ) {
@@ -591,32 +601,41 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 	 */
 	private function get_transaction_feed( $auth_token ) {
 		$transactions = false;
-		$ch = curl_init();
-		$url = $this->get_host() . '/creditor/transaction';
-		curl_setopt( $ch, CURLOPT_URL, $url );
-		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'GET' );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, array( 'Authorization: ' . $auth_token ) );
-		$server_output = curl_exec( $ch );
-		$http_code = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
-		curl_close( $ch );
+		$response = wp_remote_get( $this->get_host() . '/creditor/transaction', array(
+			'headers' => array(
+				'Authorization' => $auth_token,
+			),
+		) );
 
-		if ( 200 != $http_code ) {
+		if ( is_wp_error( $response ) ) {
+			$this->error_log( $response->get_error_message() );
+			return false;
+		}
+
+		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			$this->error_log( 'An error occurred trying to fetch Twikey transaction statuses.' );
 			return false;
 		}
 
-		$result = json_decode( $server_output );
+		$body = wp_remote_retrieve_body( $response );
 
-		foreach ( $result->{'Entries'} as $transaction ) {
-			
-			if ( ! empty( $transaction->{'ref'} ) && isset( $transaction->{'state'} ) && isset( $transaction->{'bkdate'} ) ) {
-				$transactions[$transaction->{'ref'}] = array(
-					'status' => $transaction->{'state'}, // OPEN, PAID, ERROR, etc.
-					'date' => $transaction->{'bkdate'}, // ISO 8601-formatted date/time.
-				);
+		if ( is_wp_error( $body ) ) {
+			$this->error_log( $body->get_error_message() );
+			return false;
+		}
+
+		$result = @json_decode( $body );
+
+		if ( ! empty( $result->{'Entries'} ) && is_array( $result->{'Entries'} ) ) {
+			foreach ( $result->{'Entries'} as $transaction ) {
+				if ( ! empty( $transaction->{'ref'} ) && isset( $transaction->{'state'} ) && isset( $transaction->{'bkdate'} ) ) {
+					$transactions[$transaction->{'ref'}] = array(
+						'status' => $transaction->{'state'}, // OPEN, PAID, ERROR, etc.
+						'date' => $transaction->{'bkdate'}, // ISO 8601-formatted date/time.
+					);
+				}
 			}
-		}$this->error_log( print_r( $transactions, true ) );
+		}
 
 		return $transactions;
 	}
@@ -647,7 +666,7 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 	private function error_log( $message ) {
 		$dir = dirname( dirname( __FILE__ ) );
 
-		if ( true === WP_DEBUG && is_writeable( $dir ) ) {
+		if ( true === WP_DEBUG && true === WP_DEBUG_LOG && is_writeable( $dir ) ) {
 			/* Tries writing to a separate file in the plugin folder: 'wp-content/jb-twikey-gateway-for-woocommerce/debug.log'. */
 			error_log( '[' . date_i18n( 'Y-m-d H:i:s' ) . '] ' . $message . PHP_EOL, 3, $dir . '/debug.log' );
 		} else {

@@ -34,9 +34,7 @@ payments, but works just as well without it.
 * Even after the Twikey API tells WooCommerce a mandate is signed OK, payments
 are marked _'on hold'_ until the _actual payment_ is received. Payment
 processing generally does not take longer than a few days.
-* Supports only one Twikey contract template per WooCommerce installation. This
-should never be a problem, though, as WooCommerce itself sets payments and
-payment totals. (There should be no need for payment plans outside of
-WooCommerce.)
-* To do: replace cURL functions with `wp_remote_get()` or `wp_remote_post()`
-calls.
+* Supports only one Twikey contract template per WooCommerce installation. That
+should (almost) never be a problem, though.
+* ~~To do: replace cURL functions with `wp_remote_get()` or `wp_remote_post()`
+calls.~~

@@ -8,7 +8,7 @@
  * License: GNU General Public License v2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: jb-wc-twikey
- * Version: 0.2.1
+ * Version: 0.2.2
  * GitHub Plugin URI: https://github.com/janboddez/jb-twikey-gateway-for-woocommerce/
  *
  * @author Jan Boddez [jan@janboddez.be]
@@ -43,7 +43,7 @@ class JB_Twikey_Gateway_WooCommerce {
 	 *
 	 * @since 0.1.0
 	 */
-	function load_textdomain() {
+	public function load_textdomain() {
 		load_plugin_textdomain( 'jb-wc-twikey', false, basename( dirname( __FILE__ ) ) . '/languages' );
 	}
 
@@ -52,9 +52,8 @@ class JB_Twikey_Gateway_WooCommerce {
 	 *
 	 * @since 0.1.0
 	 */
-	function init_gateway() {
-		if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-			// If WooCommerce is active.
+	public function init_gateway() {
+		if ( $this->woocommerce_is_active() ) {
 			require_once dirname( __FILE__ ) . '/includes/class-wc-gateway-jb-twikey.php';
 		}
 	}
@@ -100,14 +99,26 @@ class JB_Twikey_Gateway_WooCommerce {
 	 * @since 0.2.0
 	 */
 	public function check_transactions() {
-		if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-			// If WooCommerce is active.
+		if ( $this->woocommerce_is_active() ) {
 			$available_gateways = WC()->payment_gateways->payment_gateways();
 
 			if ( isset( $available_gateways['jb_twikey'] ) && $available_gateways['jb_twikey'] instanceof WC_Gateway_JB_Twikey ) {
 				$available_gateways['jb_twikey']->check_transactions();
 			}
 		}
+	}
+
+	/**
+	 * Verifies WooCommerce is active.
+	 *
+	 * @since 0.2.2
+	 */
+	private function woocommerce_is_active() {
+		if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+			return true;
+		}
+
+		return false;
 	}
 }
 endif;
