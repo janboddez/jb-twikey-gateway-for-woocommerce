@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Twikey Gateway for WooCommerce 0.2.0\n"
-"POT-Creation-Date: 2018-07-08 13:54+0200\n"
-"PO-Revision-Date: 2018-07-08 13:57+0200\n"
+"POT-Creation-Date: 2018-07-29 21:22+0200\n"
+"PO-Revision-Date: 2018-07-29 21:24+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -16,92 +16,83 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: languages\n"
 
-#: includes/class-wc-gateway-jb-twikey.php:29
-msgid "Pre-authorized payment via Twikey"
+#: includes/class-wc-gateway-jb-twikey.php:28
+msgid "Pre-authorized direct debit via Twikey"
 msgstr "Incassomachtiging via Twikey"
 
-#: includes/class-wc-gateway-jb-twikey.php:30
-msgid ""
-"Sign a recurring payment mandate using a debit card, eID or text message, or "
-"use an existing mandate if you've signed one before."
+#: includes/class-wc-gateway-jb-twikey.php:29
+#: includes/class-wc-gateway-jb-twikey.php:76
+msgid "Sign a direct debit mandate using a debit card, eID or text message."
 msgstr ""
-"Onderteken met je bankpas of elektronische identiteitskaart of via SMS "
-"eenmalig een incassomachtiging."
+"Teken met een bankpas, eID of SMS-bericht eenmalig een incassomachtiging."
 
-#: includes/class-wc-gateway-jb-twikey.php:70
+#: includes/class-wc-gateway-jb-twikey.php:62
 msgid "Enable/Disable"
 msgstr "Inschakelen/uitschakelen"
 
-#: includes/class-wc-gateway-jb-twikey.php:71
+#: includes/class-wc-gateway-jb-twikey.php:63
 msgid "Enable this payment gateway"
 msgstr "Deze betaalmethode inschakelen"
 
-#: includes/class-wc-gateway-jb-twikey.php:76
+#: includes/class-wc-gateway-jb-twikey.php:68
 msgid "Title"
 msgstr "Titel"
 
-#: includes/class-wc-gateway-jb-twikey.php:78
+#: includes/class-wc-gateway-jb-twikey.php:70
 msgid "Twikey"
 msgstr "Twikey"
 
-#: includes/class-wc-gateway-jb-twikey.php:79
+#: includes/class-wc-gateway-jb-twikey.php:71
 msgid "Payment method name shown on checkout."
 msgstr "Naam van de betaalmethode zoals tijdens het afrekenen getoond."
 
-#: includes/class-wc-gateway-jb-twikey.php:82
+#: includes/class-wc-gateway-jb-twikey.php:74
 msgid "Customer Message"
 msgstr "Boodschap voor klanten"
 
-#: includes/class-wc-gateway-jb-twikey.php:84
-msgid ""
-"Use your debit card or eID to sign a recurring payment mandate on checkout."
-msgstr ""
-"Onderteken met je bankpas of elektronische identiteitskaart eenmalig een "
-"incassomachtiging."
-
-#: includes/class-wc-gateway-jb-twikey.php:85
+#: includes/class-wc-gateway-jb-twikey.php:77
 msgid "Payment method description shown on checkout."
 msgstr "Naam van de betaalmethode zoals tijdens het afrekenen getoond."
 
-#: includes/class-wc-gateway-jb-twikey.php:88
+#: includes/class-wc-gateway-jb-twikey.php:80
 msgid "Transaction Message"
 msgstr "Betalingsbericht"
 
-#: includes/class-wc-gateway-jb-twikey.php:90
+#: includes/class-wc-gateway-jb-twikey.php:82
 #, php-format
 msgid "Your payment for %s."
 msgstr "Je betaling voor %s."
 
-#: includes/class-wc-gateway-jb-twikey.php:91
+#: includes/class-wc-gateway-jb-twikey.php:83
 msgid ""
 "The message customers see on their bank statement after a payment was "
 "processed."
 msgstr "Het betalingsbericht dat klanten op hun bankafschrift zullen zien."
 
-#: includes/class-wc-gateway-jb-twikey.php:94
+#: includes/class-wc-gateway-jb-twikey.php:86
 msgid "API Token"
 msgstr "API-token"
 
-#: includes/class-wc-gateway-jb-twikey.php:96
+#: includes/class-wc-gateway-jb-twikey.php:88
 #, php-format
 msgid "Your <a href=\"%s\" target=\"_blank\" rel=\"noopener\">API token</a>."
 msgstr "Je <a href=\"%s\" target=\"_blank\" rel=\"noopener\">API-token</a>."
 
-#: includes/class-wc-gateway-jb-twikey.php:99
+#: includes/class-wc-gateway-jb-twikey.php:91
 msgid "Private Key"
 msgstr "Private sleutel"
 
-#: includes/class-wc-gateway-jb-twikey.php:101
+#: includes/class-wc-gateway-jb-twikey.php:93
 #, php-format
 msgid "Your <a href=\"%s\" target=\"_blank\" rel=\"noopener\">private key</a>."
 msgstr ""
 "Je <a href=\"%s\" target=\"_blank\" rel=\"noopener\">private sleutel</a>."
 
-#: includes/class-wc-gateway-jb-twikey.php:104
+#: includes/class-wc-gateway-jb-twikey.php:96
 msgid "Contract Template"
 msgstr "Contracttemplate"
 
-#: includes/class-wc-gateway-jb-twikey.php:106
+#: includes/class-wc-gateway-jb-twikey.php:98
 #, php-format
 msgid ""
 "The unique ID of the <a href=\"%s\" target=\"_blank\" rel=\"noopener"
@@ -110,15 +101,15 @@ msgstr ""
 "Het unieke ID van de te gebruiken <a href=\"%s\" target=\"_blank\" rel="
 "\"noopener\">contracttemplate</a>."
 
-#: includes/class-wc-gateway-jb-twikey.php:109
+#: includes/class-wc-gateway-jb-twikey.php:101
 msgid "Callback Type"
 msgstr "Callback-type"
 
-#: includes/class-wc-gateway-jb-twikey.php:112
+#: includes/class-wc-gateway-jb-twikey.php:104
 msgid "Exit URL"
 msgstr "Exit URL"
 
-#: includes/class-wc-gateway-jb-twikey.php:113
+#: includes/class-wc-gateway-jb-twikey.php:105
 #, php-format
 msgid ""
 "For this payment gateway to work correctly, you <strong>absolutely must</"
@@ -129,15 +120,7 @@ msgstr ""
 "\"%1$s\" target=\"_blank\" rel=\"noopener\">contracttemplate-instellingen</"
 "a> alle Exit URL's naar %2$s wijzigt."
 
-#: includes/class-wc-gateway-jb-twikey.php:116
-msgid "Test environment?"
-msgstr "Testomgeving?"
-
-#: includes/class-wc-gateway-jb-twikey.php:117
-msgid "Check when using Twikey's test environment"
-msgstr "Indien je Twikey's testomgeving gebruikt"
-
-#: includes/class-wc-gateway-jb-twikey.php:146
+#: includes/class-wc-gateway-jb-twikey.php:143
 msgid ""
 "Could not connect to Twikey server. If this keeps happening, please contact "
 "the store owner."
@@ -145,7 +128,7 @@ msgstr ""
 "Kon de Twikey-server niet benaderen. Contacteer alsjeblieft de "
 "winkeluitbater als dit zich blijft voordoen."
 
-#: includes/class-wc-gateway-jb-twikey.php:157
+#: includes/class-wc-gateway-jb-twikey.php:150
 msgid ""
 "No Twikey mandate ID returned. Please verify the checkout form was filled "
 "out correctly and try again."
@@ -153,18 +136,18 @@ msgstr ""
 "Geen mandaat-ID ontvangen. Verifieer alsjeblieft je gegevens en probeer het "
 "nogmaals."
 
-#: includes/class-wc-gateway-jb-twikey.php:181
+#: includes/class-wc-gateway-jb-twikey.php:169
 msgid "Payment error: invalid existing Twikey mandate status returned."
 msgstr "Betalingsfout: ongeldige Twikey-mandaatstatus ontvangen."
 
-#: includes/class-wc-gateway-jb-twikey.php:190
+#: includes/class-wc-gateway-jb-twikey.php:174
 msgid "Payment error: could not get Twikey to confirm the payment request."
 msgstr "Betalingsfout: Twikey kon de betalingsaanvraag niet bevestigen."
 
-#: includes/class-wc-gateway-jb-twikey.php:198
-#: includes/class-wc-gateway-jb-twikey.php:274
-#: includes/class-wc-gateway-jb-twikey.php:292
-#: includes/class-wc-gateway-jb-twikey.php:349
+#: includes/class-wc-gateway-jb-twikey.php:183
+#: includes/class-wc-gateway-jb-twikey.php:264
+#: includes/class-wc-gateway-jb-twikey.php:279
+#: includes/class-wc-gateway-jb-twikey.php:333
 msgid ""
 "Twikey payment request successfully submitted. Awaiting final payment "
 "confirmation."
@@ -172,25 +155,25 @@ msgstr ""
 "Twikey-betalingsaanvraag succesvol verstuurd. In afwachting van "
 "betalingsbevestiging."
 
-#: includes/class-wc-gateway-jb-twikey.php:226
+#: includes/class-wc-gateway-jb-twikey.php:214
 msgid "Order could not be completed: no Twikey authorization token returned."
 msgstr ""
 "Bestelling kon niet worden afgerond: geen Twikey-authorisatietoken ontvangen."
 
-#: includes/class-wc-gateway-jb-twikey.php:250
+#: includes/class-wc-gateway-jb-twikey.php:238
 msgid "Invite error: no (new) Twikey mandate ID returned."
 msgstr "Uitnodigingsfout: geen (nieuw) Twikey-mandaat geretourneerd."
 
-#: includes/class-wc-gateway-jb-twikey.php:260
-#: includes/class-wc-gateway-jb-twikey.php:283
+#: includes/class-wc-gateway-jb-twikey.php:248
+#: includes/class-wc-gateway-jb-twikey.php:270
 msgid ""
-"Renewal order could not be completed: the status of the Twikey mandate "
-"associated with the order is invalid."
+"Renewal order could not be completed: the associated Twikey mandate has an "
+"invalid status."
 msgstr ""
-"Hernieuwen kon niet worden afgerond: het Twikey-mandaat dat aan de "
-"bestelling is gekoppeld heeft een ongeldige status."
+"Hernieuwen kon niet worden afgerond: het gekoppelde Twikey-mandaat heeft een "
+"ongeldige status."
 
-#: includes/class-wc-gateway-jb-twikey.php:595
+#: includes/class-wc-gateway-jb-twikey.php:588
 #, php-format
 msgid "Twikey transaction could not be added. The Twikey API responsed: '%s'."
 msgstr ""
