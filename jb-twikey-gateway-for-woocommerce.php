@@ -113,6 +113,8 @@ class JB_Twikey_Gateway_WooCommerce {
 	 * Verifies WooCommerce is active.
 	 *
 	 * @since 0.2.2
+	 *
+	 * @return bool True if WooCommerce is active, false otherwise.
 	 */
 	private function woocommerce_is_active() {
 		if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
