@@ -1,7 +1,8 @@
 <?php
 /**
  * Plugin Name: Twikey Gateway for WooCommerce
- * Plugin URI: https://github.com/janboddez/jb-twikey-gateway-for-woocommerce/
+ * Plugin URI: https://github.com/janboddez/jb-twikey-gateway-for-woocommerce
+ * GitHub Plugin URI: https://github.com/janboddez/jb-twikey-gateway-for-woocommerce
  * Description: Enable Twikey checkout for WooCommerce and allow customers to easily sign a recurring payment mandate. Supports (but does not require) WooCommerce Subscriptions and automatic subscription renewal payments.
  * Author: Jan Boddez
  * Author URI: https://janboddez.be/
