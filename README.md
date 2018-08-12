@@ -16,7 +16,8 @@ set to
 `http(s)://mysite.com/wc-api/wc_gateway_jb_twikey/?mandateNumber={0}&state={1}&sig={3}`,
 where (only) `http(s)://mysite.com` should obviously be adapted to your
 situation. **This step is absolutely necessary for payments to function
-correctly.**
+correctly** and will lead customers back to your website after they've signed a
+mandate.
 
 ## Notes
 * Supports WooCommerce Subscriptions and automatic subscription renewal
