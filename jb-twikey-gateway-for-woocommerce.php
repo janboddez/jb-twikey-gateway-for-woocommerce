@@ -10,7 +10,6 @@
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: jb-wc-twikey
  * Version: 0.2.2
- * GitHub Plugin URI: https://github.com/janboddez/jb-twikey-gateway-for-woocommerce/
  *
  * @author Jan Boddez [jan@janboddez.be]
  * @license http://www.gnu.org/licenses/gpl-2.0.html GNU General Public License v2.0
