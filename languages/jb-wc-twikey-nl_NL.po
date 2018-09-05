@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Twikey Gateway for WooCommerce 0.2.2\n"
-"POT-Creation-Date: 2018-07-29 21:22+0200\n"
-"PO-Revision-Date: 2018-07-29 21:24+0200\n"
+"POT-Creation-Date: 2018-09-05 21:39+0200\n"
+"PO-Revision-Date: 2018-09-05 21:40+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -172,6 +172,10 @@ msgid ""
 msgstr ""
 "Hernieuwen kon niet worden afgerond: het gekoppelde Twikey-mandaat heeft een "
 "ongeldige status."
+
+#: includes/class-wc-gateway-jb-twikey.php:388
+msgid "Twikey payment confirmed."
+msgstr "Betaling via Twikey bevestigd."
 
 #: includes/class-wc-gateway-jb-twikey.php:588
 #, php-format
