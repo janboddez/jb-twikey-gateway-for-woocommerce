@@ -385,7 +385,7 @@ class WC_Gateway_JB_Twikey extends WC_Payment_Gateway {
 					$order = wc_get_order( $order_id );
 
 					if ( ! $order->has_status( 'processing' ) && ! $order->has_status( 'complete' ) ) {
-						$order->add_order_note( 'Twikey payment confirmed.', 'jb-wc-twikey' );
+						$order->add_order_note( __( 'Twikey payment confirmed.', 'jb-wc-twikey' ) );
 						$order->set_date_paid( $transaction['date'] );
 						$order->payment_complete();
 					}
